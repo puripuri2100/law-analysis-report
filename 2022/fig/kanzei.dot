@@ -1,0 +1,68 @@
+digraph graphname {
+  rankdir = TB
+  graph [
+    charset = "UTF-8",
+    rankdir = TB,
+    nodesep = 1.1,
+    ranksep = 1.05,
+    compound = true,
+    labelloc = "t",
+    labeljust = "l",
+  ];
+
+  node [
+    shape = record,
+    fontname = "Migu 1M",
+    fontsize = 12,
+  ];
+
+  root [label="第〇四〇四・一〇号"]
+  a_1 [label="一"]
+  a_1_1 [label="（一）"]
+  a_1_1_1 [label="（１）"]
+  a_1_1_2 [label="（２）"]
+  a_1_1_2_1 [label="（ⅰ）"]
+  a_1_1_2_2 [label="（ⅰⅰ）"]
+  a_1_1_2_2_1 [
+    label="１",
+    style="filled,bold",
+    fillcolor=pink
+  ]
+  a_1_1_2_2_2 [
+    label="２",
+    style="filled,bold",
+  fillcolor=lightblue
+    
+  ]
+  a_1_2 [label="（二）"]
+  a_1_2_1 [label="（１）"]
+  a_1_2_2 [label="（２）"]
+  a_1_2_2_1 [label="（ⅰ）"]
+  a_1_2_2_2 [label="（ⅰⅰ）"]
+  a_1_2_2_2_1 [
+    label="１",
+    style="filled,bold",
+    fillcolor=orange
+  ]
+  a_1_2_2_2_2 [
+    label="２",
+    style="filled,bold",
+  fillcolor=lightgreen
+  ]
+
+  root -> a_1;
+  a_1       -> a_1_1;
+  a_1_1     -> a_1_1_1;
+  a_1_1     -> a_1_1_2;
+  a_1_1_2   -> a_1_1_2_1;
+  a_1_1_2   -> a_1_1_2_2;
+  a_1_1_2_2 -> a_1_1_2_2_1;
+  a_1_1_2_2 -> a_1_1_2_2_2;
+  a_1       -> a_1_2;
+  a_1_2     -> a_1_2_1;
+  a_1_2     -> a_1_2_2;
+  a_1_2_2   -> a_1_2_2_1;
+  a_1_2_2   -> a_1_2_2_2;
+  a_1_2_2_2 -> a_1_2_2_2_1;
+  a_1_2_2_2 -> a_1_2_2_2_2;
+}

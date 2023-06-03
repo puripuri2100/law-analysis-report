@@ -1,0 +1,107 @@
+@require: class-template/class-template
+
+
+module ClassReport : sig
+
+  type position
+  val top : position
+  val here : position
+
+
+  val document : inline-text -> inline-text -> block-text -> document
+
+
+  direct +section : [string?; bool?; inline-text; block-text] block-cmd
+  direct +p : [inline-text] block-cmd
+
+  direct \footnote : [inline-text] inline-cmd
+
+  direct +figure : [string?; position?; inline-text; block-text] block-cmd
+  direct +table : [string?; position?; inline-text; block-text] block-cmd
+
+  direct \url : [string] inline-cmd
+
+  direct \ref : [string] inline-cmd
+  direct \ref-page : [string] inline-cmd
+
+  type bibitem
+  val bibitem : string ?-> string -> inline-text -> bibitem
+  direct +thebibliography : [bibitem list] block-cmd
+  direct \cite : [string list] inline-cmd
+
+
+end = struct
+
+  type position = ClassTemplate.position
+  let top = ClassTemplate.top
+  let here = ClassTemplate.here
+
+  type setting = ClassTemplate.setting
+
+
+
+  let document title author inner =
+    ClassTemplate.document (
+      ClassTemplate.default-setting
+      |> ClassTemplate.set-top-margin 35mm
+      |> ClassTemplate.set-bottom-margin 30mm
+      |> ClassTemplate.set-left-margin 35mm
+      |> ClassTemplate.set-right-margin 35mm
+      |> ClassTemplate.set-width-page 210mm
+      |> ClassTemplate.set-height-page 297mm
+      |> ClassTemplate.set-normal-font-size 10pt
+      |> ClassTemplate.set-title title
+      |> ClassTemplate.set-author-multiline {|筑波大学 情報学群 情報科学類 産学間連携推進室|#author;|}
+      |> ClassTemplate.set-author-font-size-ratio 1.0
+      |> ClassTemplate.set-date-font-size-ratio 1.0
+      |> ClassTemplate.set-header (fun _ _ _ _ _ -> block-nil)
+      %|> ClassTemplate.set-footer (fun _ _ _ _ _ -> block-nil)
+      |> ClassTemplate.set-show-title true
+      |> ClassTemplate.set-show-toc false
+      |> ClassTemplate.set-title-page false
+    ) inner
+
+
+  % class-templateから必要なコマンドをラップして再公開
+
+
+  let-block ctx +section ?:label-opt ?:is-omit-opt title inner =
+    match (label-opt, is-omit-opt) with
+    | (Some(label), Some(is-omit)) -> read-block ctx '<+ClassTemplate.section ?:(label) ?:(is-omit) (title) (inner);>
+    | (Some(label), None)          -> read-block ctx '<+ClassTemplate.section ?:(label) (title) (inner);>
+    | (None, Some(is-omit))        -> read-block ctx '<+ClassTemplate.section ?* ?:(is-omit) (title) (inner);>
+    | (None, None)                 -> read-block ctx '<+ClassTemplate.section (title) (inner);>
+
+  let-block +p it = '<+ClassTemplate.p(it);>
+
+
+
+  let-inline \footnote inner = {\ClassTemplate.footnote (inner);}
+
+  let-block ctx +figure ?:label-opt ?:pos-opt caption inner =
+    match (label-opt, pos-opt) with
+    | (Some(label), Some(pos)) -> read-block ctx '<+ClassTemplate.figure ?:(label) ?:(pos) (caption) (inner);>
+    | (Some(label), None)      -> read-block ctx '<+ClassTemplate.figure ?:(label) (caption) (inner);>
+    | (None, Some(pos))        -> read-block ctx '<+ClassTemplate.figure ?* ?:(pos) (caption) (inner);>
+    | (None, None)             -> read-block ctx '<+ClassTemplate.figure (caption) (inner);>
+
+  let-block ctx +table ?:label-opt ?:pos-opt caption inner =
+    match (label-opt, pos-opt) with
+    | (Some(label), Some(pos)) -> read-block ctx '<+ClassTemplate.table ?:(label) ?:(pos) (caption) (inner);>
+    | (Some(label), None)      -> read-block ctx '<+ClassTemplate.table ?:(label) (caption) (inner);>
+    | (None, Some(pos))        -> read-block ctx '<+ClassTemplate.table ?* ?:(pos) (caption) (inner);>
+    | (None, None)             -> read-block ctx '<+ClassTemplate.table (caption) (inner);>
+
+  let-inline \url url = {\ClassTemplate.url (url);}
+
+  let-inline \ref      label = {\ClassTemplate.ref      (label);}
+  let-inline \ref-page label = {\ClassTemplate.ref-page (label);}
+
+  type bibitem = ClassTemplate.bibitem
+  let bibitem = ClassTemplate.bibitem
+  let-block ctx +thebibliography lst = read-block ctx '<+ClassTemplate.thebibliography (lst);>
+  let-inline \cite lst = {\ClassTemplate.cite (lst);}
+
+
+end
+

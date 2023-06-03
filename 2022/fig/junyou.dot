@@ -1,0 +1,27 @@
+digraph graphname {
+  rankdir = TB
+  graph [
+    charset = "UTF-8",
+    rankdir = TB,
+    nodesep = 1.1,
+    ranksep = 1.05,
+    compound = true,
+    labelloc = "t",
+    labeljust = "l",
+  ];
+
+  node [
+    shape = record,
+    fontname = "Migu 1M",
+    fontsize = 12,
+  ];
+
+
+  kiteiA [label="規定A"]
+  joukouA [label = "条項A"]
+  kiteiA2 [label="規定A'"]
+
+
+  joukouA -> kiteiA;
+  joukouA -> kiteiA2[style="dashed", label="読み替え規定で補正"];
+}
